@@ -122,3 +122,77 @@
 # names = %w[田中 鈴木 佐藤]
 # p names.map { |name| "#{name}さん" }.join('と')
 # ----------------
+# さまざまな繰り返し処理
+# # times
+# sum = 0
+# # 処理を5回繰り返す、nには0,1,2,3,4が入る
+# 5.times {|n| sum+= n }
+# sum = 0
+# 5.times { sum += 1 }
+# p sum
+# # ----------------
+# # upto downto
+# # nからmまで数値を増やしたいとき
+# a = []
+# 10.upto(14) { |n| a << n }
+# p a
+# a = []
+# 14.downto(10) { |n| a << n }
+# p a
+# ---------------
+# step
+# 1, 3, 5, 7のように、nからmまで数値をｘずつ増やしながら何かを処理したい時に使う。
+# 開始値.step(上限値、１度に増減する大きさ)
+# a = []
+# 1.step(10, 2) { |n| a << n }
+# p a
+
+# a = []
+# 10.step(1, -2){ |n| a << n }
+# p a
+# # -------------------
+# # while until
+# a = []
+# while a.size < 5
+#   a << 1
+# end
+# p a
+
+# a = []
+# while a.size < 5 do a << 1 end
+# p a
+
+# a = []
+# a << 1 while a.size < 5
+# p a
+
+# # どんな条件でも最低１回は実行したいという場合はbegin...endで囲んでからwhileを書く
+# a = []
+# begin
+#   a << 1
+# end while false
+# p a
+
+# a = [10,20,30,40,50]
+# until a.size <= 3
+#   a.delete_at(-1)
+# end
+# p a
+
+# a = [10,20,30,40,50]
+# while a.size > 3
+#   a.delete_at(-1)
+# end
+# p a
+# -----------------------
+# loop
+numbers = [1,2,3,4,5]
+loop do
+  # sampleメソッドでランダムに要素を１つ取得する
+  n = numbers.sample
+  puts n
+  break if n == 5
+end
+
+# loopはブロックを使うがwhileはブロックを使わないので、変数は外でも使える
+# ーーーーーーーーーーーーー
