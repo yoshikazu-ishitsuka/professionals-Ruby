@@ -186,13 +186,176 @@
 # p a
 # -----------------------
 # loop
-numbers = [1,2,3,4,5]
-loop do
-  # sampleメソッドでランダムに要素を１つ取得する
-  n = numbers.sample
-  puts n
-  break if n == 5
-end
+# numbers = [1,2,3,4,5]
+# loop do
+#   # sampleメソッドでランダムに要素を１つ取得する
+#   n = numbers.sample
+#   puts n
+#   break if n == 5
+# end
 
 # loopはブロックを使うがwhileはブロックを使わないので、変数は外でも使える
 # ーーーーーーーーーーーーー
+# 繰り返し処理用の制御構造
+# break
+# shuffleメソッドで配列の要素をランダムに並び替える
+# numbers = [1,2,3,4,5].shuffle
+# numbers.each do |number|
+#   puts number
+#   break if number == 5
+# end
+
+# ------------
+
+# numbers = [1,2,3,4,5].shuffle
+# i = 0
+# while i < numbers.size
+#   n = numbers[i]
+#   puts n
+#   break if n == 5
+#   i += 1
+# end
+
+# -----------
+# ret =
+#   while true
+#     break 123
+#   end
+# p ret
+# ----------
+# 繰り返し処理が入れ子になっている場合は一番内側の繰り返し処理を脱出します
+# fruits = %w[apple orange melon]
+# numbers = [1,2,3]
+# fruits.each do |fruit|
+#   # 配列の数字をランダムに入れ替え、３が出たらbreakする
+#   numbers.shuffle.each do |n|
+#     puts "#{fruit}, #{n}"
+#     # numbersのループは脱出するが、fruitsのループは継続する
+#     break if n == 3
+#   end
+# end
+# # # -----------------
+# # throw, catch
+# # 一気に外側のループまで脱出したい時はKarnelモジュールのthrowメソッドとcatchメソッドを使う
+# # catch タグ do
+# #   # 繰り返し処理など
+# #   throw 上と同じタグ
+# # end
+
+# fruits = %w[apple melon orange]
+# numbers = [1, 2, 3]
+# catch :done do
+#   fruits.shuffle.each do |fruit|
+#     numbers.shuffle.each do |n|
+#       puts "#{fruit}, #{n}"
+#       if fruit == 'orange' && n == 3
+#         # すべての繰り返し処理を脱出する
+#         throw :done
+#       end
+#     end
+#   end
+# end
+# # タグには通常はシンボルを指定する
+# # タグが一致しない場合はエラーになる
+# # throwメソッドに第二引数を渡すとcatchメソッドの戻り値になる
+# # ーーーーーーーーーーーーーーーーーーー
+# # 繰り返し処理で使うbreakとreturnの違い
+# def greeting(country)
+#   # countryがnilならメッセージを返してメソッドを抜ける
+#   return 'countryを入力してください' if country.nil?
+
+#   if country == 'japan'
+#     'こんにちは'
+#   else
+#     'hello'
+#   end
+# end
+# puts greeting(nil)
+# # breakは繰り返し処理からの脱出
+# # returnはメソッドからの脱出
+# def calc_with_break
+#   numbers = [1,2,3,4,5,6]
+#   target = nil
+#   numbers.shuffle.each do |n|
+#     target = n
+#     # breakで脱出する
+#     break if n.even?
+#   end
+#   target * 10
+# end
+# p calc_with_break
+# # ------------------
+# def calc_with_break
+#   numbers = [1,2,3,4,5,6]
+#   target = nil
+#   numbers.shuffle.each do |n|
+#     target = n
+#     # breakで脱出する
+#     return if n.even?
+#   end
+#   target * 10
+# end
+# p calc_with_break
+# # --------------------
+# # returnはメソッド以外で使うとエラーになる
+# # [1,2,3].each do |n|
+# #   puts n
+# #   return
+# # end
+# # ------------------
+# next
+# numbers = [1,2,3,4,5]
+# numbers.each do |n|
+#   # 偶数であれば中断して次の繰り返し処理に進む
+#   next if n.even?
+#   puts n
+# end
+# 入れ子になった繰り返し処理ではbreakと同じで一番内側のループだけが中断の対象になる
+# numbers = [1,2,3,4,5]
+# i = 0
+# while i < numbers.size
+#   n = numbers[i]
+#   i += 1
+#   # while文の中でnextを使う
+#   next if n.even?
+#   puts n
+# end
+
+# fruits = %w[apple melon orange]
+# numbers = [1,2,3,4]
+# fruits.each do |fruit|
+#   numbers.each do |n|
+#     # 繰り返し処理が入れ子になっている場合は、一番内側のループだけが中断される
+#     next if n.even?
+#     puts "#{fruit}, #{n}"
+#   end
+# end
+# # ----------------------
+# redo
+# 繰り返し処理をやり直したい場合はredoを使います。ここでいうやりなおしは初回からやり直すのではなく、その回の繰り返し処理の最初に戻る、という意味です。
+# foods = %w[ピーマン トマト セロリ]
+# foods.each do |food|
+#   print "#{food}は好きですか？ => "
+#   # sampleは配列からランダムに１要素を取得するメソッド
+#   answer = ['はい', 'いいえ'].sample
+#   puts answer
+
+#   # はいと答えなければもう一度聞き直す
+#   redo unless answer == 'はい'
+# end
+# -----------------
+foods = %w[ピーマン トマト セロリ]
+count = 0
+foods.each do |food|
+  print "#{food}は好きですか？ => "
+  # わざといいえしか答えないようにする
+  answer = 'いいえ'
+  puts answer
+
+  count += 1
+  # やり直しは2回までにする
+  redo if answer != 'はい' && count < 2
+
+  # カウントをリセット
+  count = 0
+end
