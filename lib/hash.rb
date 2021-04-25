@@ -64,4 +64,111 @@
 
 # # ブロックを渡すとキーが見つからないときの戻り値を作成出来る
 # p currencies.delete('italy') { |key| "Not found: #{key}" }
+# # # -------------------------
+# # ハッシュの使用頻度が髙いメソッド
+# # keysメソッドはハッシュのキーを配列として返します
+# currencies = { japan: 'yen', us: 'dollar', india: 'rupee' }
+# p currencies.keys
+# # valuesメソッドはハッシュの値を配列として返します
+# p currencies.values
+# # has_key?(key?/include?/member?)
+# # has_key?メソッドはハッシュの中に指定されたキーが存在するかどうかを確認するメソッド。
+# p currencies.has_key?(:japan)
+# p currencies.has_key?(:italy)
+# # -----------------------
+# # /**をハッシュの前につけるとハッシュリテラル内でほかのハッシュのキーと値を展開することができます
+# h = { us: 'dollar', india: 'rupee' }
+# p a = { japan: 'yen', **h }
+# # mergeメソッドを使っても同じになる
+# p a = { japan: 'yen' }.merge(h)
+# ---------------------
+# ハッシュを使った疑似キーワード引数
+# def buy_burger(menu, options = {})
+#   drink = options[:drink]
+#   potato = options[:potato]
+# end
+
+# buy_burger('cheese', drink: true, potato: true)
+# 特別な要件が無い限り、疑似キーワード引数よりも文法レベルでRuby本体がサポートしてくれるキーワード引数を使った方がメリットが大きい。
+# # ----------------------
+# # 任意のキーワードを受け付ける**引数
+# # キーワード引数を使うメソッドに存在しないキーワードを渡すとエラーが発生する
+# # def buy_burger(menu, drink: true, potato: true)
+# # end
+# # p buy_burger('fish', drink: true, potato: false, salad: true, chicken: false)
+# # >unknown keywords: salad, chicken (ArgumentError)
+
+# # しかし、任意のキーワードも同時に受け取りたいという時は**を付けた引数を最後に用意します。**を付けた引数にはキーワード引数で指定されていないキーワードがハッシュとして格納されます。
+# # 想定外のキーワードはothers引数で受け取る
+# def buy_burger(menu, drink: true, potato: true, **others)
+#   # othersはハッシュとして渡される
+#   puts others
+# end
+# buy_burger('fish', drink: true, potato: false, salad: true, chicken: false)
 # # -------------------------
+# # メソッド呼び出し時の{}の省略
+# # 最後の引数がハッシュであればハッシュリテラルの{}を省略出来るというルールがある。
+# def buy_burger(menu, options = {})
+#   puts options
+# end
+# buy_burger('fish', { 'drink' => true, 'potato' => 'false' })
+# # 上は下のように{}を省略出来る
+# buy_burger('fish', 'drink' => true, 'potato' => 'false' )
+# # ただし、あくまで最後の引数がハッシュであればに限る
+# # # ーーーーーーーーーーーーーーーー
+# # ハッシュリテラルの{}とブロックの{}
+# def buy_burger(options = {}, menu)
+#   puts options
+# end
+# buy_burger({ 'drink' => true, 'potato' => 'false' }, 'fish')
+# # ()ありのメソッド呼び出し
+# puts('Hello')
+# # ()なしのメソッド呼び出し
+# puts 'Hello'
+# buy_burger { 'drink' => true, 'potato' => 'false' }, 'fish'
+# # =>{}がブロックとRubyに解釈されてエラーになる
+# # メソッドの第一引数にハッシュを渡そうとする場合は必ず()を付けてメソッドを呼び出す
+# buy_burger({ 'drink' => true, 'potato' => 'false' }, 'fish')
+# # 第二引数以降にハッシュがくる場合は()を省略してもエラーにならない
+# # この場合はハッシュが最後の引数なので、{}を省略することも可能
+# buy_burger 'fish', 'drink' => true, 'potato' => 'false'
+# # # -------------------------
+# # ハッシュから配列へ、配列からハッシュへ
+# # ハッシュはto_aメソッドで配列に変換することが可能
+# currencies = { japan: 'yen', us: 'dollar', india: 'rupee' }
+# p currencies.to_a
+# # 反対に、配列にto_hメソッドを使うと配列をハッシュに変換することが出来る
+# array = [[:japan, "yen"], [:us, "dollar"], [:india, "rupee"]]
+# p array.to_h
+# array = [:japan, "yen", :us, "dollar", :india, "rupee"]
+# p Hash[*array]
+# # # --------------------
+# # ハッシュの初期値を理解する
+# h = Hash.new('hello')
+# a = h[:foo]
+# b = h[:bar]
+
+# p a.equal?(b)
+
+# a.upcase!
+# p a
+# p b
+# p h
+# # ---------------
+# # Hash.newとブロックを組み合わせて初期値を返すことでこのような問題を避けることが出来る
+# h = Hash.new { 'hello' }
+# a = h[:foo]
+# b = h[:bar]
+# p a.equal?(b)
+# a.upcase!
+# p a
+# p b
+# p h
+# # -------------
+# # Hash.newにブロックを与えるとブロック引数としてハッシュ自身と見つからなかったキーが渡される。
+# # そこでこのブロック引数を使って、ハッシュにキーと初期値も同時に設定するコードもよく使われます。
+# h = Hash.new { |hash, key| hash[key] = 'hello' }
+# p h[:foo]
+# p h[:bar]
+# p h
+# # ---------------
