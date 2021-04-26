@@ -171,4 +171,133 @@
 # p h[:foo]
 # p h[:bar]
 # p h
-# # ---------------
+# # # ---------------
+# # シンボルを作成するさまざまな方法
+# :apple
+# :ruby_is_fun
+# :okay?
+# :welcome!
+# :_secret
+# :$dollar
+# :@at_mark
+# # 無効な文字列
+# # :12345
+# # :ruby-is-fun
+# # :ruby is fun
+# # :()
+# # ただしシングルクォーテーションで囲めば有効
+# :'12345'
+# :'ruby-is-fun'
+# :'ruby is fun'
+# :'()'
+
+# name = 'Alice'
+# p :"#{name.upcase}"
+# # 文字列：値の形式で書くと、キーがシンボルになる
+# p hash = { 'abc': 123 }
+# # --------------------
+# # %記号でシンボルやシンボルの配列を作成する
+# # シンボルを作成する場合は%sを使う
+# # ・!を区切り文字に使う
+# p %s!ruby is fun!
+# # ・()を区切り文字に使う
+# p %s(ruby is fun)
+# # シンボルの配列は%i
+# p %i(apple orange melon)
+# # 改行文字を含めたり、式展開するときは%I
+# name = 'Alice'
+# # %Iでは改行文字や式展開が有効になったうえでシンボルが作られる
+# p %I(hello\ngood-bye #{name.upcase})
+# # -------------
+# # シンボルと文字列の関係
+# # 文字列とシンボルは似ているが別物なので互換性はない
+# # ただし、to_symメソッド（intern）で文字列をシンボルに変換することができる
+# string = 'apple'
+# symbol = :apple
+# p string.to_sym
+# p string.to_sym == symbol
+# # 反対にシンボルを文字列に変換する場合はto_sメソッド(id2name)を使う
+# # メソッドによっては文字列とシンボルを同等に扱うものがある。たとえばrespond_to?メソッドは
+# # オブジェクトに対して、文字列又はシンボルで指定した名前のメソッドを呼び出せるかどうかを調べることができる
+# # respond_to?メソッドの引数には文字列とシンボルの両方を渡せる
+# p 'apple'.respond_to?('include?')
+# p 'apple'.respond_to?(:include?)
+# # しかし、文字列とシンボルを同等に扱うことは少ない
+# p 'apple'.include?('pp')
+# p 'apple'.include?(:pp) # no implicit conversion of Symbol into String (TypeError)
+# # # --------------
+# # よく使われるイディオム  条件分岐で変数に代入 / &.演算子
+# # 国名に応じて通貨を返す（該当がなければnil）
+# def find_currency(country)
+#   currencies = { japan: 'yen', us: 'dollar', india: 'rupee' }
+#   currencies[country]
+# end
+# # 指定された国の通貨を大文字にして返す
+# def show_currency(country)
+#   currency = find_currency(country)
+#   # nilでないことをチェック
+#   if currency
+#     currency.upcase
+#   end
+# end
+
+# p show_currency(:japan)
+# p show_currency(:brazil)
+
+# def show_currency(country)
+#   # 条件分岐内で直接変数に代入してしまう（値が取得できれば真、できなければ偽）
+#   if currency = find_currency(country)
+#     currency.upcase
+#   end
+# end
+# # ただしこの書き方は=と==を間違えたと思われるためあまり好ましくない
+# # Ruby2.3から登場した&.演算子を使う
+# # &.演算子を使うとメソッドを呼び出せれたオブジェクトがnilでない場合はその結果を、nilだった場合はnilを返す。
+# # nil以外のオブジェクトであれば、a.upcaseと書いた場合と同じ結果になる
+# a = 'foo'
+# p a&.upcase
+# # nilであればnilを返す
+# a = nil
+# p a&.upcase
+# # 先程のshow_currencyも書き換えることができる
+# def show_currency(country)
+#   currency = find_currency(country)
+#   # currencyがnilの場合を考慮して、&.演算子でメソッドを呼び出す
+#   currency&.upcase
+# end
+# p show_currency(:japan)
+# p show_currency(:brazil)
+# # &.演算子にはsave navigation operatorという名前があるが、lonely operatorと呼ばれることもある
+# # # -----------------
+# # よく使われるイディオム ||=を使った自己代入
+# limit ||= 10
+# # このコードの意味は変数limitがnilまたはfalseであれば、10を代入する（それ以外はlimitの値をそのまま使う）の意味
+# limit = nil
+# limit ||= 10
+# p limit
+
+# limit = 20
+# limit ||= 10
+# p limit
+# # ----------------
+# # よく使われるイディオム !!を使った真偽値の型変換
+# def user_exists?
+#   # データベースなどからユーザーを探す
+#   user = find_user
+#   if user
+#     # userが見つかったのでtrue
+#     true
+#   else
+#     # userが見つからないのでfalse
+#     false
+#   end
+# end
+# # 上のようなコードは次のようにコンパクトに書ける
+# def user_exists?
+#/   !!find_user
+# end
+# #/ !は否定の演算子です。!Aと書いた場合、Aが真であればfalseを、そうでなければtrueを返します。
+# # つまりここで値がtrueまたはfalseのどちらかに変換されます。それをもう一度!で反転させると、元のA
+# # に対応する真偽値がtrueまたはfalseとして得ることができるわけです。
+# #/ !!が出てきたら「これはtrueまたはfalseに変換するためだな」と解釈する
+# --------------------
